@@ -15,6 +15,23 @@ dotnet run
 dotnet publish --output "C:\custom\publish\directory"
 ```
 
+## Installing NLog
+
+Install NLog nuget package for Windows Service .NET framework
+- NLog is a logging platform for .NET with rich log routing and management capabilities.
+- NLog supports traditional logging, structured logging and the combination of both.
+
+Standard install
+1. Install the latest NLog version 5.3.4 from [NuGet](https://www.nuget.org/packages/NLog/).
+   - dotnet add package NLog --version 5.3.4
+2. Setup initial NLog.config xml-file.
+   - Choose "Add" > "New Item..."
+   - In the "Add New Item" dialog, search for "XML File" or "XML" and select it.
+   - Name the file NLog.config and click the "Add" button.
+3. Set "Copy To Output Directory" to "Copy if newer" for the NLog.config.
+
+That's it, you can now compile and run your application and it will be able to use NLog.
+
 ## Install the service
 
 ```bash

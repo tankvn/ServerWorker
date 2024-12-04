@@ -2,11 +2,12 @@ namespace ServerWorker;
 
 public class Worker : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
+    // Create a static logger field
+    private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     public Worker(ILogger<Worker> logger)
     {
-        _logger = logger;
+        //_logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -15,7 +16,7 @@ public class Worker : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                Logger.Info("Worker running at: {time}", DateTimeOffset.Now);
 
                 await Task.Delay(3000, stoppingToken);
             }
@@ -27,7 +28,7 @@ public class Worker : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Message}", ex.Message);
+            Logger.Error(GetExceptionInfo(ex, "Worker.cs"));
 
             // Terminates this process and returns an exit code to the operating system.
             // This is required to avoid the 'BackgroundServiceExceptionBehavior', which
@@ -39,5 +40,20 @@ public class Worker : BackgroundService
             // recovery options, we need to terminate the process with a non-zero exit code.
             Environment.Exit(1);
         }
+    }
+
+    private string GetExceptionInfo(Exception ex, string className)
+    {
+        var lineNumber = 0;
+        const string lineSearch = ":line ";
+        var index = ex.StackTrace.LastIndexOf(lineSearch);
+        if (index != -1)
+        {
+            var lineNumberText = ex.StackTrace.Substring(index + lineSearch.Length);
+            if (int.TryParse(lineNumberText, out lineNumber))
+            {
+            }
+        }
+        return $"{className}:line {lineNumber} | {ex.GetType()}: {ex.Message}";
     }
 }
